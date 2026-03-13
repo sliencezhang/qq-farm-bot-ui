@@ -641,14 +641,38 @@ function openChannelDocs() {
   window.open(url, '_blank', 'noopener,noreferrer')
 }
 
+function formatTime(seconds: number) {
+  if (!seconds || seconds <= 0)
+    return ''
+  
+  const hours = Math.floor(seconds / 3600)
+  const minutes = Math.floor((seconds % 3600) / 60)
+  
+  if (hours > 0 && minutes > 0)
+    return `${hours}小时${minutes}分钟`
+  else if (hours > 0)
+    return `${hours}小时`
+  else if (minutes > 0)
+    return `${minutes}分钟`
+  else
+    return ''
+}
+
 const preferredSeedOptions = computed(() => {
   const options = [{ label: '自动选择', value: 0 }]
   if (seeds.value) {
-    options.push(...seeds.value.map(seed => ({
-      label: `${seed.requiredLevel}级 ${seed.name} (${seed.price}金)`,
-      value: seed.seedId,
-      disabled: seed.locked || seed.soldOut,
-    })))
+    options.push(...seeds.value.map(seed => {
+      // 格式化成熟时间
+      const timeText = seed.maturitySeconds ? formatTime(seed.maturitySeconds) : ''
+      
+      return {
+        label: timeText 
+          ? `${seed.requiredLevel}级 ${seed.name} (${seed.price}金 ${timeText})`
+          : `${seed.requiredLevel}级 ${seed.name} (${seed.price}金)`,
+        value: seed.seedId,
+        disabled: seed.locked || seed.soldOut,
+      }
+    }))
   }
   return options
 })
@@ -660,6 +684,7 @@ interface BagSeedItem {
   requiredLevel: number
   image: string
   plantSize: number
+  maturitySeconds?: number
 }
 
 const bagSeeds = ref<BagSeedItem[]>([])

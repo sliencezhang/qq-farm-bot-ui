@@ -4,7 +4,7 @@
  */
 
 const protobuf = require('protobufjs');
-const { getFruitName, getPlantByFruitId, getPlantBySeedId, getItemById, getItemImageById, getSeedImageBySeedId } = require('../config/gameConfig');
+const { getFruitName, getPlantByFruitId, getPlantBySeedId, getItemById, getItemImageById, getSeedImageBySeedId, getPlantGrowTime } = require('../config/gameConfig');
 const { isAutomationOn } = require('../models/store');
 const { sendMsgAsync, networkEvents, getUserState } = require('../utils/network');
 const { types } = require('../utils/proto');
@@ -398,7 +398,7 @@ async function getBagDetail() {
 
 /**
  * 获取背包中的所有种子
- * @returns {Promise<Array<{seedId: number, name: string, count: number, requiredLevel: number, image: string, plantSize: number}>>} 种子列表
+ * @returns {Promise<Array<{seedId: number, name: string, count: number, requiredLevel: number, image: string, plantSize: number, maturitySeconds?: number}>>} 种子列表
  */
 async function getBagSeeds() {
     const bagReply = await getBag();
@@ -415,6 +415,7 @@ async function getBagSeeds() {
         if (!plant) continue;
 
         if (!merged.has(id)) {
+            const maturitySeconds = getPlantGrowTime(plant.id);
             merged.set(id, {
                 seedId: id,
                 name: plant.name || `种子${id}`,
@@ -422,6 +423,7 @@ async function getBagSeeds() {
                 requiredLevel: Number(plant.land_level_need) || 0,
                 image: getSeedImageBySeedId(id),
                 plantSize: Math.max(1, Number(plant.size) || 1),
+                maturitySeconds,
             });
         }
         merged.get(id).count += count;

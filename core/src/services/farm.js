@@ -807,6 +807,7 @@ async function getAvailableSeeds() {
                 const seedId = toNum(goods.item_id);
                 const plantCfg = getPlantBySeedId(seedId);
                 const plantId = toNum(plantCfg && plantCfg.id);
+                const maturitySeconds = getPlantGrowTime(plantId);
 
                 list.push({
                     seedId,
@@ -818,6 +819,7 @@ async function getAvailableSeeds() {
                     image: getSeedImageBySeedId(seedId),
                     locked: !goods.unlocked || state.level < requiredLevel,
                     soldOut: isSoldOut,
+                    maturitySeconds,
                 });
             }
         }
