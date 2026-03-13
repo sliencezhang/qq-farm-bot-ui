@@ -220,20 +220,18 @@ watch(() => props.show, (newVal) => {
   if (newVal) {
     errorMessage.value = ''
     if (props.editData) {
-      // Edit mode: Default to QR refresh, load code
-      activeTab.value = 'qr'
+      // Edit mode: Default to manual
+      activeTab.value = 'manual'
       form.name = props.editData.name
       form.code = props.editData.code || ''
       form.platform = props.editData.platform || 'qq'
-      loadQRCode()
     }
     else {
-      // Add mode: Default to QR
-      activeTab.value = 'qr'
+      // Add mode: Default to manual
+      activeTab.value = 'manual'
       form.name = ''
       form.code = ''
       form.platform = 'qq'
-      loadQRCode()
     }
   }
   else {
@@ -265,17 +263,17 @@ watch(() => props.show, (newVal) => {
         <div class="mb-4 flex border-b border-gray-200 dark:border-gray-700">
           <button
             class="flex-1 py-2 text-center font-medium"
-            :class="activeTab === 'qr' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500'"
-            @click="activeTab = 'qr'; loadQRCode()"
-          >
-            {{ editData ? '扫码更新' : '扫码登录' }}
-          </button>
-          <button
-            class="flex-1 py-2 text-center font-medium"
             :class="activeTab === 'manual' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500'"
             @click="activeTab = 'manual'; stopQRCheck()"
           >
             手动填码
+          </button>
+          <button
+            class="flex-1 py-2 text-center font-medium"
+            :class="activeTab === 'qr' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500'"
+            @click="activeTab = 'qr'; loadQRCode()"
+          >
+            {{ editData ? '扫码更新' : '扫码登录' }}
           </button>
         </div>
 
