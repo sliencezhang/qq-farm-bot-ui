@@ -631,11 +631,12 @@ useIntervalFn(updateCountdowns, 1000)
                 />
 
                 <BaseButton
-                  variant="primary"
+                  variant="danger"
                   size="sm"
-                  @click="onLogSearchTrigger"
+                  :loading="clearLogsLoading"
+                  @click="onClearLogs"
                 >
-                  <div class="i-carbon-search" />
+                  <div class="i-carbon-trash-can" />
                 </BaseButton>
               </div>
 
@@ -657,12 +658,11 @@ useIntervalFn(updateCountdowns, 1000)
                 />
 
                 <BaseButton
-                  variant="danger"
+                  variant="primary"
                   size="sm"
-                  :loading="clearLogsLoading"
-                  @click="onClearLogs"
+                  @click="onLogSearchTrigger"
                 >
-                  <div class="i-carbon-trash-can" />
+                  <div class="i-carbon-search" />
                 </BaseButton>
               </div>
 
