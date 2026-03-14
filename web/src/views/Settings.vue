@@ -38,11 +38,43 @@ const token = computed(() => {
 })
 
 function copyToClipboard(text: string) {
-  navigator.clipboard.writeText(text).then(() => {
-    toast.success('复制成功')
-  }).catch(() => {
+  // 检查 Clipboard API 是否可用
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(() => {
+      toast.success('复制成功')
+    }).catch(() => {
+      fallbackCopy(text)
+    })
+  }
+  else {
+    fallbackCopy(text)
+  }
+}
+
+function fallbackCopy(text: string) {
+  // 使用传统方法作为后备
+  const textarea = document.createElement('textarea')
+  textarea.value = text
+  textarea.style.position = 'fixed'
+  textarea.style.left = '-9999px'
+  textarea.style.top = '0'
+  document.body.appendChild(textarea)
+  textarea.select()
+  try {
+    const successful = document.execCommand('copy')
+    if (successful) {
+      toast.success('复制成功')
+    }
+    else {
+      toast.error('复制失败，请手动复制')
+    }
+  }
+  catch (err) {
     toast.error('复制失败，请手动复制')
-  })
+  }
+  finally {
+    document.body.removeChild(textarea)
+  }
 }
 
 const modalVisible = ref(false)
